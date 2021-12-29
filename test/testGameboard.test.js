@@ -1,4 +1,5 @@
-import { Gameboard, shipList } from "../src";
+import {Gameboard} from "../src/gameboard";
+import {createShipList} from "../src/gameboard";
 import Ship from "../src/ship";
 
 const a = new Array(10);
@@ -8,6 +9,7 @@ for (let i=0; i<10; i++) {
         a[i][j] = 0;
     }
 }
+const shipList = createShipList();
 const s = [Ship(1,4),Ship(2,3),Ship(3,3),Ship(4,2),
     Ship(5,2), Ship(6,2), Ship(7,1), Ship(8,1), Ship(9,1), Ship(10,1)];
 test('original all 0 array', () => {
@@ -114,3 +116,44 @@ test('test place 2 ships, the second one cant because -10', () => {
     // 2nd ship at 5,5 length 4 ship[1] vertically
     expect(gb1.placeShip(4,7, 'vertical', shipList[0])).toBe(false);
 })
+
+// next: recieve attacks
+
+test('receive attack basic, placeship at 0,0 length 4 vertically, hit at 3,0', () => {
+    for (let i=0; i<10; i++) {
+        a[i] = new Array(10);
+        for (let j = 0; j<10; j++){
+            a[i][j] = 0;
+        }
+    }
+    const testShip = [];
+    testShip[0] = Ship(1,4);
+    for (let i = 0; i<testShip[0].length; i++){
+        a[0+i][0] = testShip[0].name;
+        a[0+i][1] = -10;
+    }
+    a[4][0] = -10;
+    // 
+    const gb1 = Gameboard();
+    gb1.placeShip(0,0, 'vertical', testShip[0]);
+    gb1.receiveAttack(3,0);
+    // 
+    a[3][0] = -1;
+    testShip[1] = Ship(2,3);
+    testShip[1].hit();
+    testShip[1].hit();
+    testShip[1].hit();
+    console.log(testShip[1].isSunk());
+    console.table(a);
+    expect(gb1.arrayGB).toEqual(a);
+
+})
+
+// test sunk of one ship 
+test('test sunk of one ship', () => {
+    const testShip = Ship(1,3);
+    testShip.hit();
+    testShip.hit();
+    testShip.hit();
+    expect(testShip.isSunk()).toBe(true);
+});

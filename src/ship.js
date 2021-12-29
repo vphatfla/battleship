@@ -10,7 +10,7 @@ const Ship = (name, length) => {
   // take a hit, mark 1 position is hit, example: ship1 hit 1 -> -1 0 0 0 0, hit twice: -1 -1 0 0 0
   const hit = () => {
     for (let i = 0; i < shipHit.length; i += 1) {
-      if (shipHit[i] === 0) {
+      if (shipHit[i] !== -1) {
         shipHit[i] = -1;
         return;
       }
@@ -20,7 +20,7 @@ const Ship = (name, length) => {
   // ship is sunk when all array = 1, so if there is still = 0, issunk() = false
   const isSunk = () => {
     for (let i = 0; i < shipHit.length; i += 1) {
-      if (shipHit[i] === 0) return false;
+      if (shipHit[i] !== -1) return false;
     }
     return true;
   };

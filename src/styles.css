@@ -1,0 +1,91 @@
+body{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+.container{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+.ctn{
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    grid-column-gap: 0;
+    grid-row-gap: 0;
+    margin: 30px;
+    border-bottom: 1px solid black;
+    border-left: 1px solid black;;
+}
+.box{
+    width: 30px;
+    height: 30px;
+    border-top: 1px solid black;
+    border-right:1px solid black;
+    margin: 0;
+}
+.shipBox{
+    background-color: gray;
+}
+.shipHitBox{
+    background-color: #FF6262;
+}
+.shipSunkBox{
+    background-color: red;
+}
+.aroundShipHitBox, .emptyBox{
+    background-color: #ff0;
+}
+.gray-board{
+    opacity: 0.5;
+}
+
+#display-none-div{
+ display: none;
+}
+.change-ship-position-div{
+    position: absolute;
+    background-color: white;
+    border: 1px solid black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.change-ship-position-div h1{
+    margin: 10px;
+}
+.greenHover{
+    background-color: green;
+}
+.active{
+    color: white;
+    background-color: black;
+}
+.red{
+    color: red;
+}
+.explain-box{
+    position: absolute;
+    background-color: white;
+    border: 1px solid black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.p-box{
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+.exit-explain{
+    margin: 10px;
+}

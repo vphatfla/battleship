@@ -1,91 +1,133 @@
-import Ship from './ship';
-// ship list
-const shipList = [];
-// 1 ship length 4
-shipList[0] = Ship(1, 4);
+import './styles.css';
+import { placeShipRandomForComputer, makeComputerAttack } from './computerPlayer';
+// eslint-disable-next-line import/no-cycle
+import changeShipPosition from './changeShipPosition';
+import Players from './players';
+// eslint-disable-next-line import/no-cycle
 
-// 2 ship length 3
-shipList[1] = Ship(2, 3);
-shipList[2] = Ship(3, 3);
+// explain button
+document.querySelector('.explain').addEventListener('click', () => {
+  document.querySelector('.explain-box').id = '';
+  document.querySelector('.exit-explain').addEventListener('click', () => {
+    document.querySelector('.explain-box').id = 'display-none-div';
+  });
+});
+const p1 = new Players('John', true);
+const computer = new Players('Computer', false);
 
-// 3 ship length 2
-shipList[3] = Ship(4, 2);
-shipList[4] = Ship(5, 2);
-shipList[5] = Ship(6, 2);
+p1.setEnemy(computer);
+computer.setEnemy(p1);
+// function to place ships randomly for computer board
+placeShipRandomForComputer(computer);
 
-// 4 ship length 4
-shipList[6] = Ship(7, 1);
-shipList[7] = Ship(8, 1);
-shipList[8] = Ship(9, 1);
-shipList[9] = Ship(10, 1);
+placeShipRandomForComputer(p1);
 
-const Gameboard = () => {
-  // create 10x10 grid fresh with all 0
-  const arrayGB = new Array(10);
-  for (let i = 0; i < arrayGB.length; i += 1) {
-    arrayGB[i] = new Array(10);
+// create playground
+const createGrid = (ctn, arr) => {
+  // eslint-disable-next-line no-param-reassign
+  ctn.innerHTML = '';
+
+  for (let i = 0; i < 100; i += 1) {
+    const cell = document.createElement('div');
+    cell.classList.add('box');
+    if (arr) {
+      const x = Math.trunc(i / 10);
+      const y = i % 10;
+      if (arr[x][y] >= 1 && arr[x][y] <= 10) cell.classList.add('shipBox');
+      if (arr[x][y] === -1) cell.classList.add('shipHitBox');
+      if (arr[x][y] === -100) cell.classList.add('shipSunkBox');
+      if (arr[x][y] === -3) cell.classList.add('aroundShipHitBox');
+      if (arr[x][y] === -2) cell.classList.add('emptyBox');
+      if (arr[x][y] === 0) cell.classList.add('whiteBox');
+      // add x,y attribute for box
+      cell.setAttribute('x', x);
+      cell.setAttribute('y', y);
+    }
+    ctn.appendChild(cell);
   }
-  for (let i = 0; i < 10; i += 1) {
-    for (let j = 0; j < 10; j += 1) {
-      arrayGB[i][j] = 0;
-    }
-  }
-
-  // place the ship function
-  const placeShip = (x, y, direction, ship) => {
-    // check if the length of ship is not over the walls
-    if ((direction === 'horizontal' && y > (9 - ship.length + 1))
-    || (direction === 'vertical' && x > (9 - ship.length + 1))) return false;
-    // check the available of the coordinate, the 0 value is the avalable
-    if (direction === 'horizontal') {
-      for (let i = 0; i < ship.length; i += 1) {
-        if (arrayGB[x][y + i] !== 0) return false;
-      }
-    } else if (direction === 'vertical') {
-      for (let i = 0; i < ship.length; i += 1) {
-        if (arrayGB[x + i][y] !== 0) return false;
-      }
-    }
-
-    // place the ship, i + 1 display the position of the ship ex: 1,2,3,4,5
-    if (direction === 'horizontal') {
-      for (let i = 0; i < ship.length; i += 1) {
-        arrayGB[x][y + i] = ship.name;
-        // check if the above row is exist
-        // if yes then put then = - 10 unavalable to place other ship
-        if (x - 1 >= 0) { arrayGB[x - 1][y + i] = -10; }
-        if (x + 1 <= 9) { arrayGB[x + 1][y + i] = -10; }
-      }
-      // make the one at the head and tail of the ship unavable, example: -10 0 1 -10
-      if (y - 1 >= 0) { arrayGB[x][y - 1] = -10; }
-      if (y + ship.length <= 9) { arrayGB[x][y + ship.length] = -10; }
-    } else if (direction === 'vertical') {
-      for (let i = 0; i < ship.length; i += 1) {
-        arrayGB[x + i][y] = ship.name;
-        // check if left col and right col is exist and make them unavalable
-        if (y - 1 >= 0) { arrayGB[x + i][y - 1] = -10; }
-        if (y + 1 <= 9) { arrayGB[x + i][y + 1] = -10; }
-      }
-      // head and tail
-      if (x - 1 >= 0) { arrayGB[x - 1][y] = -10; }
-      if (x + ship.length <= 9) { arrayGB[x + ship.length][y] = -10; }
-    }
-
-    // return true when successfully place
-    return true;
-  };
-
-  const receiveAttack = (x, y) => {
-    // return false when miss, -10 or the ship is not clickable
-    if (arrayGB[x][y] === 0) return false;
-    return true;
-  };
-
-  return {
-    arrayGB, placeShip, receiveAttack,
-  };
+};
+// play flow
+let playerBoard = document.querySelector('.player-board');
+let playerPlayBoard = document.querySelector('.player-play-board');
+createGrid(playerBoard, p1.playerGB.arrayGB);
+createGrid(playerPlayBoard, p1.visualArray());
+// sleep
+const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
+// remove gray (disable) ctn
+const removeGray = (ctn) => {
+  ctn.classList.remove('gray-board');
+};
+// add gray (disable) ctn
+const addGray = (ctn) => {
+  ctn.classList.add('gray-board');
 };
 
+// ctn1 -> main turn
+const cssTurn = async (ctn1, ctn2) => {
+  removeGray(ctn1);
+  removeGray(ctn2);
+  addGray(ctn2);
+};
+const computerMove = () => {
+  const computerResult = makeComputerAttack(computer);
+  // create grid of computer play (p1.arrayGB)
+
+  createGrid(playerBoard, p1.playerGB.arrayGB);
+  if (computerResult === -1) computerMove();
+};
+
+const playMain = async (box) => {
+  // turn of player first
+  // turn player, attack action
+  const x = parseInt(box.getAttribute('x'), 10);
+  const y = parseInt(box.getAttribute('y'), 10);
+  const result = p1.attackPosition(x, y);
+  createGrid(playerPlayBoard, p1.visualArray());
+  // -1 -> player hit the ship -> continue
+  // add gray to the playerboard
+  if (result === -1) {
+    // turn gray as player turn
+    cssTurn(playerPlayBoard, playerBoard);
+    // eslint-disable-next-line no-use-before-define
+    createEventListener(playerPlayBoard);
+  } else {
+    cssTurn(playerBoard, playerPlayBoard);
+    // computer move
+    await sleep(1000);
+    computerMove();
+    await sleep(1000);
+    // if not return turn to player
+    cssTurn(playerPlayBoard, playerBoard);
+    // eslint-disable-next-line no-use-before-define
+    createEventListener(playerPlayBoard);
+  }
+};
+// create eventlistener for box in p1.visualarray()
+const createEventListener = (ctn) => {
+  // only whitebox is clickable;
+  const boxs = ctn.querySelectorAll('.whiteBox');
+
+  boxs.forEach((box) => box.addEventListener('click', () => {
+    playMain(box);
+  }));
+};
+// changeship position form
+changeShipPosition();
+const updateDOMAfterChangePosition = () => {
+  playerBoard = document.querySelector('.player-board');
+  playerPlayBoard = document.querySelector('.player-play-board');
+};
+// game start below (functions called)
+const startGame = () => {
+  updateDOMAfterChangePosition();
+  // turn player (playerplayboard) first
+  cssTurn(playerPlayBoard, playerBoard);
+  createEventListener(playerPlayBoard);
+};
+
+startGame();
+// div change ship position program here
+
 export {
-  Gameboard, shipList,
+  createGrid, p1, startGame, computer,
 };
