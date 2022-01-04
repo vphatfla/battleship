@@ -171,6 +171,13 @@ const saveButton = () => {
     return true;
   });
 };
+// event for cancel button
+const cancelButton = () => {
+  const btn = document.querySelector('.cancel-change-button');
+  btn.addEventListener('click', () => {
+    document.querySelector('.change-ship-position-div').id = 'display-none-div';
+  });
+};
 const changeShipPosition = () => {
   // change ship button event
   const changeShipPostionDiv = document.querySelector('.change-ship-position-div');
@@ -186,6 +193,7 @@ const changeShipPosition = () => {
     randomPositionButton(draftPlayer, changeShipPositionBoard, buttonsDiv);
     clearPositionButton(changeShipPositionBoard);
     manualPositionButton(buttonsDiv, changeShipPositionBoard);
+    cancelButton();
     saveButton();
   });
 };

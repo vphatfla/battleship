@@ -89,3 +89,55 @@ body{
 .exit-explain{
     margin: 10px;
 }
+button {
+    background-color: white; 
+    color: black; 
+    
+    border: none;
+    text-align: center;
+    padding: 5px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+    border-radius: 3px;
+  }
+button:hover {
+    background-color: gray;
+    color: white;
+    border: none;
+  }
+.link{
+    margin-bottom: 4%;
+}
+.save-cancel-buttons{
+    margin-bottom: 5%;
+}
+.random-manual-button{
+    margin-bottom: 5%;
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    align-items: center;
+}
+.random-manual-button button{
+    margin-left: 10px;
+}
+.change-ship-position-div button{
+    border: none;
+}
+.change-ship-position-div button:hover{
+    background-color: gray;
+    color: white;
+}
+a{
+    text-decoration: none;
+    color: #944d4d;
+}
+.footer{
+    position: fixed;
+    bottom: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
